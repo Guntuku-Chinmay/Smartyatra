@@ -16,7 +16,7 @@ def budget_score(user_budget: float, destination_budget: float) -> float:
     overflow = (destination_budget - user_budget) / user_budget
 
     return max(0.0, 1.0 - overflow)
-
+    
 
 def interest_score(
     user_interests: list[str],
