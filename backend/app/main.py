@@ -14,16 +14,13 @@ setup_logging()
 logger = logging.getLogger(__name__)
 
 app = FastAPI(
-    title=settings.app_name,
-    description="Backend API for SmartYatra",
-    version=settings.app_version,
+    title="SmartYatra API",
+    version="1.0.0",
 )
 
 setup_cors(app)
 setup_exception_handlers(app)
 setup_request_logging(app)
-
-app.include_router(api_router)
 
 logger.info("SmartYatra API started successfully")
 
@@ -33,3 +30,8 @@ def root():
     return {
         "message": f"Welcome to {settings.app_name}"
     }
+
+app.include_router(
+    api_router,
+    prefix="/api",
+)

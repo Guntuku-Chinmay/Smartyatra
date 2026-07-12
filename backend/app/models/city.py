@@ -1,4 +1,4 @@
-from sqlalchemy import String
+from sqlalchemy import String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base_class import Base
@@ -10,6 +10,15 @@ class City(Base):
     """
 
     __tablename__ = "cities"
+
+    __table_args__ = (
+        UniqueConstraint(
+            "name",
+            "state",
+            "country",
+            name="uq_city",
+        ),
+    )
 
     id: Mapped[int] = mapped_column(
         primary_key=True,
