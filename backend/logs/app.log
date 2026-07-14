@@ -30,3 +30,14 @@
 2026-07-12 15:37:07,033 | INFO | GET / | 200 | 0.67 ms
 2026-07-12 15:38:15,339 | INFO | GET /docs | 200 | 0.26 ms
 2026-07-12 15:38:16,293 | INFO | GET /openapi.json | 200 | 10.28 ms
+2026-07-12 17:06:37,118 | INFO | SmartYatra API started successfully
+2026-07-12 17:06:37,971 | INFO | SmartYatra API started successfully
+2026-07-12 17:06:43,237 | INFO | GET / | 200 | 7.46 ms
+2026-07-14 19:16:45,892 | INFO | SmartYatra API started successfully
+2026-07-14 19:16:46,886 | INFO | SmartYatra API started successfully
+2026-07-14 19:16:48,923 | INFO | GET / | 200 | 1.76 ms
+2026-07-14 19:17:01,143 | INFO | GET /docs | 200 | 0.38 ms
+2026-07-14 19:17:01,532 | INFO | GET /openapi.json | 200 | 24.20 ms
+2026-07-14 19:17:31,041 | INFO | SmartYatra API started successfully
+2026-07-14 19:17:39,452 | INFO | GET /docs | 200 | 0.36 ms
+2026-07-14 19:17:39,556 | INFO | GET /openapi.json | 200 | 42.75 ms
