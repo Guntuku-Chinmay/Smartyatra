@@ -40,3 +40,21 @@ class DestinationResponse(TimestampSchema):
     image_url: str | None
 
     model_config = ConfigDict(from_attributes=True)
+
+class DestinationBase(BaseModel):
+    name: str
+    description: str | None = None
+    latitude: float
+    longitude: float
+    rating: float = 0.0
+    image_url: str | None = None
+    city_id: int
+    category_id: int
+
+class DestinationCreate(DestinationBase):
+    pass
+
+class DestinationResponse(DestinationBase):
+    id: int
+
+    model_config = ConfigDict(from_attributes=True)

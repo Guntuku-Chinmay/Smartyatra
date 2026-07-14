@@ -38,4 +38,5 @@ class Category(Base):
     destinations = relationship(
         "Destination",
         back_populates="category",
+        cascade="all, delete-orphan",
     )
