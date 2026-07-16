@@ -46,3 +46,9 @@ class City(Base):
         back_populates="city",
         cascade="all, delete-orphan",
     )
+
+    trips = relationship(
+        "Trip",
+        back_populates="city",
+        cascade="all, delete-orphan",
+    )

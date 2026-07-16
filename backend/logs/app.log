@@ -41,3 +41,8 @@
 2026-07-14 19:17:31,041 | INFO | SmartYatra API started successfully
 2026-07-14 19:17:39,452 | INFO | GET /docs | 200 | 0.36 ms
 2026-07-14 19:17:39,556 | INFO | GET /openapi.json | 200 | 42.75 ms
+2026-07-16 21:14:30,271 | INFO | SmartYatra API started successfully
+2026-07-16 21:14:31,209 | INFO | SmartYatra API started successfully
+2026-07-16 21:14:33,844 | INFO | GET / | 200 | 1.89 ms
+2026-07-16 21:15:11,927 | INFO | GET /docs | 200 | 0.40 ms
+2026-07-16 21:15:12,076 | INFO | GET /openapi.json | 200 | 68.05 ms

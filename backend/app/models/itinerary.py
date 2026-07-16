@@ -4,7 +4,7 @@ from sqlalchemy import ForeignKey, Integer, Text, Time
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base_class import Base
-
+from app.db.mixins import TimestampMixin
 
 class Itinerary(Base):
     """
@@ -52,3 +52,5 @@ class Itinerary(Base):
         "Trip",
         back_populates="itineraries",
     )
+
+    destination = relationship("Destination")
