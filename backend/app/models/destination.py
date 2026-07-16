@@ -34,3 +34,13 @@ class Destination(Base, TimestampMixin):
 
     city = relationship("City", back_populates="destinations")
     category = relationship("Category", back_populates="destinations")
+
+    itineraries = relationship(
+        "Itinerary",
+        back_populates="destination",
+        cascade="all, delete-orphan",
+    )
+    destination = relationship(
+        "Destination",
+        back_populates="itineraries",
+    )

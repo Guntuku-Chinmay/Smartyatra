@@ -1,10 +1,11 @@
 from datetime import date, datetime
 from enum import Enum
 
-from sqlalchemy import Date, DateTime, Enum as SQLEnum, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import Date, DateTime, Enum as SQLEnum, ForeignKey, Integer, String
 
 from app.db.base_class import Base
+from app.db.mixins import TimestampMixin
 
 
 class TripStatus(str, Enum):
@@ -13,7 +14,7 @@ class TripStatus(str, Enum):
     COMPLETED = "COMPLETED"
 
 
-class Trip(Base):
+class Trip(Base, TimestampMixin):
     """
     Represents a travel plan created by the user.
     """
@@ -73,4 +74,14 @@ class Trip(Base):
         "TripDestination",
         back_populates="trip",
         cascade="all, delete-orphan",
+    )
+
+    city_id: Mapped[int] = mapped_column(
+        ForeignKey("cities.id"),
+        nullable=False,
+    )
+
+    city = relationship(
+        "City",
+        back_populates="trips",
     )

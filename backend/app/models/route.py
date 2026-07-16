@@ -2,9 +2,9 @@ from sqlalchemy import Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base_class import Base
+from app.db.mixins import TimestampMixin
 
-
-class Route(Base):
+class Route(Base,TimestampMixin):
     """
     Represents travel information between destinations in a trip.
     """
@@ -17,7 +17,7 @@ class Route(Base):
     )
 
     trip_id: Mapped[int] = mapped_column(
-        ForeignKey("trips.id", ondelete="CASCADE"),
+        ForeignKey("trips.id"),
         nullable=False,
     )
 
@@ -50,4 +50,14 @@ class Route(Base):
     trip = relationship(
         "Trip",
         back_populates="routes",
+    )
+
+    total_distance: Mapped[float] = mapped_column(
+        Float,
+        default=0.0,
+    )
+
+    estimated_duration: Mapped[float] = mapped_column(
+        Float,
+        default=0.0,
     )
