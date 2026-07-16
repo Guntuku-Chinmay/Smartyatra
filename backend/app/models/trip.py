@@ -85,3 +85,10 @@ class Trip(Base, TimestampMixin):
         "City",
         back_populates="trips",
     )
+
+    budget = relationship(
+        "Budget",
+        back_populates="trip",
+        uselist=False,
+        cascade="all, delete-orphan",
+    )

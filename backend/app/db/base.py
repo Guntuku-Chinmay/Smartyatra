@@ -8,3 +8,4 @@ from app.models.route import Route
 from app.models.trip import Trip
 from app.models.trip_destination import TripDestination
 from app.models.itinerary import Itinerary
+from app.models.budget import Budget
