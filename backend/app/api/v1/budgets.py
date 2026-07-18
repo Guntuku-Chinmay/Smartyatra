@@ -3,7 +3,11 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
 from app.repositories.budget import BudgetRepository
-from app.schemas.budget import BudgetCreate, BudgetResponse
+from app.schemas.budget import (
+    BudgetCreate,
+    BudgetUpdate,
+    BudgetResponse,
+)
 from app.services.budget import BudgetService
 
 router = APIRouter(
@@ -37,3 +41,44 @@ def create_budget(
 ):
     service = BudgetService(BudgetRepository(db))
     return service.create_budget(budget)
+
+@router.put("/{budget_id}", response_model=BudgetResponse)
+def update_budget(
+    budget_id: int,
+    budget: BudgetUpdate,
+    db: Session = Depends(get_db),
+):
+    service = BudgetService(BudgetRepository(db))
+
+    updated = service.update_budget(
+        budget_id,
+        budget,
+    )
+
+    if updated is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Budget not found",
+        )
+
+    return updated
+
+
+@router.delete("/{budget_id}")
+def delete_budget(
+    budget_id: int,
+    db: Session = Depends(get_db),
+):
+    service = BudgetService(BudgetRepository(db))
+
+    deleted = service.delete_budget(budget_id)
+
+    if deleted is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Budget not found",
+        )
+
+    return {
+        "message": "Budget deleted successfully"
+    }
