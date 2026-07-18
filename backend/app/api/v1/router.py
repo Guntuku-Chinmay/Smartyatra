@@ -6,6 +6,7 @@ from app.api.v1.destinations import router as destinations_router
 from app.api.v1.routes import router as routes_router
 from app.api.v1.trips import router as trips_router
 from app.api.v1.budgets import router as budgets_router
+from app.api.v1.itineraries import router as itineraries_router
 
 api_router = APIRouter()
 
@@ -15,3 +16,4 @@ api_router.include_router(destinations_router)
 api_router.include_router(trips_router)
 api_router.include_router(routes_router)
 api_router.include_router(budgets_router)
+api_router.include_router(itineraries_router)

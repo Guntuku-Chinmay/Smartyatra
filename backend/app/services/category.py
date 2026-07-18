@@ -1,7 +1,9 @@
 from app.models.category import Category
 from app.repositories.category import CategoryRepository
-from app.schemas.category import CategoryCreate
-
+from app.schemas.category import (
+    CategoryCreate,
+    CategoryUpdate,
+)
 
 class CategoryService:
 
@@ -23,3 +25,34 @@ class CategoryService:
         category = Category(**category_data.model_dump())
 
         return self.repository.create(category)
+    
+    def update_category(self, category_id: int, category_data):
+        category = self.repository.get(category_id)
+
+        if category is None:
+            return None
+
+        update_data = category_data.model_dump(exclude_unset=True)
+
+        if (
+            "name" in update_data
+            and update_data["name"] != category.name
+        ):
+            existing = self.repository.get_by_name(update_data["name"])
+            if existing:
+                raise ValueError("Category already exists")
+
+        for key, value in update_data.items():
+            setattr(category, key, value)
+
+        return self.repository.update(category)
+
+
+    def delete_category(self, category_id: int):
+        category = self.repository.get(category_id)
+
+        if category is None:
+            return None
+
+        self.repository.delete(category)
+        return category

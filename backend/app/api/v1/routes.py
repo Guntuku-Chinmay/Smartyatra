@@ -3,7 +3,11 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
 from app.repositories.route import RouteRepository
-from app.schemas.route import RouteCreate, RouteResponse
+from app.schemas.route import (
+    RouteCreate,
+    RouteUpdate,
+    RouteResponse,
+)
 from app.services.route import RouteService
 
 router = APIRouter(
@@ -40,3 +44,42 @@ def create_route(
 ):
     service = RouteService(RouteRepository(db))
     return service.create_route(route)
+
+
+@router.put("/{route_id}", response_model=RouteResponse)
+def update_route(
+    route_id: int,
+    route: RouteUpdate,
+    db: Session = Depends(get_db),
+):
+    service = RouteService(RouteRepository(db))
+
+    updated = service.update_route(route_id, route)
+
+    if updated is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Route not found",
+        )
+
+    return updated
+
+
+@router.delete("/{route_id}")
+def delete_route(
+    route_id: int,
+    db: Session = Depends(get_db),
+):
+    service = RouteService(RouteRepository(db))
+
+    deleted = service.delete_route(route_id)
+
+    if deleted is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Route not found",
+        )
+
+    return {
+        "message": "Route deleted successfully"
+    }

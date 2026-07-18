@@ -33,8 +33,10 @@ class CRUDRepository(Generic[ModelType]):
         self.db.refresh(obj)
         return obj
 
-    def update(self):
+    def update(self, obj: ModelType):
         self.db.commit()
+        self.db.refresh(obj)
+        return obj
 
     def delete(self, obj: ModelType):
         self.db.delete(obj)

@@ -23,3 +23,26 @@ class CityService:
 
     def get_cities_by_state(self, state: str):
         return self.repository.get_by_state(state)
+    
+    def update_city(self, city_id: int, city_data):
+        city = self.repository.get(city_id)
+
+        if city is None:
+            return None
+
+        update_data = city_data.model_dump(exclude_unset=True)
+
+        for key, value in update_data.items():
+            setattr(city, key, value)
+
+        return self.repository.update(city)
+
+
+    def delete_city(self, city_id: int):
+        city = self.repository.get(city_id)
+
+        if city is None:
+            return None
+
+        self.repository.delete(city)
+        return city
