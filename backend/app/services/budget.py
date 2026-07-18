@@ -1,6 +1,9 @@
 from app.models.budget import Budget
 from app.repositories.budget import BudgetRepository
-from app.schemas.budget import BudgetCreate
+from app.schemas.budget import (
+    BudgetCreate,
+    BudgetUpdate,
+)
 
 
 class BudgetService:
@@ -20,3 +23,29 @@ class BudgetService:
 
     def get_budget_by_trip(self, trip_id: int):
         return self.repository.get_by_trip(trip_id)
+
+    def update_budget(
+        self,
+        budget_id: int,
+        budget_data: BudgetUpdate,
+    ):
+        budget = self.repository.get(budget_id)
+
+        if budget is None:
+            return None
+
+        update_data = budget_data.model_dump(exclude_unset=True)
+
+        for key, value in update_data.items():
+            setattr(budget, key, value)
+
+        return self.repository.update(budget)
+
+    def delete_budget(self, budget_id: int):
+        budget = self.repository.get(budget_id)
+
+        if budget is None:
+            return None
+
+        self.repository.delete(budget)
+        return budget
