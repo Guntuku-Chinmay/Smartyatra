@@ -6,5 +6,9 @@ from app.schemas.destination import (
     DestinationUpdate,
 )
 from app.schemas.itinerary import ItineraryCreate, ItineraryResponse
-from app.schemas.route import RouteCreate, RouteResponse
+from app.schemas.route import (
+    RouteCreate,
+    RouteResponse,
+    RouteUpdate,
+)
 from app.schemas.trip import TripCreate, TripResponse, TripUpdate

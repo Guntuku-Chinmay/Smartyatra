@@ -5,6 +5,7 @@ from app.api.deps import get_db
 from app.repositories.destination import DestinationRepository
 from app.schemas.destination import (
     DestinationCreate,
+    DestinationUpdate,
     DestinationResponse,
 )
 from app.services.destination import DestinationService
@@ -22,7 +23,10 @@ def get_destinations(db: Session = Depends(get_db)):
 
 
 @router.get("/{destination_id}", response_model=DestinationResponse)
-def get_destination(destination_id: int, db: Session = Depends(get_db)):
+def get_destination(
+    destination_id: int,
+    db: Session = Depends(get_db),
+):
     service = DestinationService(DestinationRepository(db))
 
     destination = service.get_destination(destination_id)
@@ -43,6 +47,48 @@ def create_destination(
 ):
     service = DestinationService(DestinationRepository(db))
     return service.create_destination(destination)
+
+
+@router.put("/{destination_id}", response_model=DestinationResponse)
+def update_destination(
+    destination_id: int,
+    destination: DestinationUpdate,
+    db: Session = Depends(get_db),
+):
+    service = DestinationService(DestinationRepository(db))
+
+    updated = service.update_destination(
+        destination_id,
+        destination,
+    )
+
+    if updated is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Destination not found",
+        )
+
+    return updated
+
+
+@router.delete("/{destination_id}")
+def delete_destination(
+    destination_id: int,
+    db: Session = Depends(get_db),
+):
+    service = DestinationService(DestinationRepository(db))
+
+    deleted = service.delete_destination(destination_id)
+
+    if deleted is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Destination not found",
+        )
+
+    return {
+        "message": "Destination deleted successfully"
+    }
 
 
 @router.get("/city/{city_id}", response_model=list[DestinationResponse])

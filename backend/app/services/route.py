@@ -1,6 +1,6 @@
 from app.models.route import Route
 from app.repositories.route import RouteRepository
-from app.schemas.route import RouteCreate
+from app.schemas.route import RouteCreate, RouteUpdate
 
 
 class RouteService:
@@ -21,13 +21,19 @@ class RouteService:
         route = Route(**route_data.model_dump())
         return self.repository.create(route)
 
-    def update_route(self, route_id: int, route_data: dict):
+    def update_route(
+        self,
+        route_id: int,
+        route_data: RouteUpdate,
+    ):
         route = self.repository.get(route_id)
 
         if route is None:
             return None
 
-        for key, value in route_data.items():
+        update_data = route_data.model_dump(exclude_unset=True)
+
+        for key, value in update_data.items():
             setattr(route, key, value)
 
         return self.repository.update(route)
