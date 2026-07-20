@@ -6,6 +6,7 @@ import {
   SearchBar,
   FilterBar,
   DestinationGrid,
+  LoadingGrid,
 } from "@/components/explore";
 
 import { useDestinations } from "@/hooks/useDestinations";
@@ -34,24 +35,24 @@ export default function ExplorePage() {
     });
   }, [destinations, search, category]);
 
+  // ✅ Loading State
   if (isLoading) {
     return (
       <main className="mx-auto max-w-7xl px-6 py-12">
-        <h1 className="mb-4 text-4xl font-bold">
+        <h1 className="mb-8 text-4xl font-bold">
           Explore Destinations
         </h1>
 
-        <p className="text-slate-600">
-          Loading destinations...
-        </p>
+        <LoadingGrid />
       </main>
     );
   }
 
+  // ✅ Error State
   if (isError) {
     return (
       <main className="mx-auto max-w-7xl px-6 py-12">
-        <h1 className="mb-4 text-4xl font-bold">
+        <h1 className="mb-8 text-4xl font-bold">
           Explore Destinations
         </h1>
 
