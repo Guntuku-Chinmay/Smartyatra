@@ -6,9 +6,10 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { motion } from "framer-motion";
+import { User, Mail, Lock, MapPin, Coins, Sparkles, Loader2, AlertCircle } from "lucide-react";
 
 import { useAuthStore } from "@/store/auth.store";
-import Button from "@/components/ui/Button";
 
 const signupSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -47,7 +48,7 @@ export default function SignupPage() {
       name: "",
       email: "",
       password: "",
-      homeCity: "Mumbai",
+      homeCity: "Visakhapatnam",
       travelStyle: "Standard",
       budget: 20000,
     },
@@ -86,125 +87,151 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex min-h-[90vh] items-center justify-center bg-radial from-slate-900 via-slate-950 to-black px-4 py-12 text-white">
-      <div className="w-full max-w-2xl overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/60 p-8 shadow-2xl backdrop-blur-xl md:p-10">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+    <div className="flex min-h-[90vh] items-center justify-center bg-gradient-to-b from-blue-50/50 via-white to-slate-50 px-4 py-12">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-3xl overflow-hidden rounded-3xl border border-slate-100 bg-white p-8 shadow-2xl shadow-slate-200/50 md:p-10"
+      >
+        {/* Brand Header */}
+        <div className="text-center">
+          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 border border-blue-100 text-blue-600 mb-4">
+            <Sparkles className="h-6 w-6 text-blue-600 animate-pulse" />
+          </div>
+          <h1 className="font-display text-3xl font-black text-slate-900">
             Create Your Account
           </h1>
-          <p className="mt-2 text-sm text-slate-400">
-            Sign up to plan, budget, and optimize your travel experiences
+          <p className="mt-2 text-sm font-semibold text-slate-500">
+            Sign up to plan, budget, and customize your travel experiences
           </p>
         </div>
 
         {error && (
-          <div className="mb-6 rounded-lg border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
-            ⚠️ {error}
-          </div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mt-6 flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 p-4 text-sm font-medium text-red-600"
+          >
+            <AlertCircle className="h-5 w-5 shrink-0" />
+            <span>{error}</span>
+          </motion.div>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
             {/* Column 1: Account Info */}
             <div className="space-y-4">
-              <h3 className="text-lg font-bold text-blue-400">Account Details</h3>
+              <h3 className="font-display text-lg font-bold text-blue-600 border-b border-slate-50 pb-2">Account Details</h3>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-300">
+                <label className="block text-sm font-bold text-slate-700">
                   Full Name
                 </label>
-                <input
-                  type="text"
-                  placeholder="John Doe"
-                  {...register("name")}
-                  className={`mt-2 w-full rounded-lg border bg-slate-950 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition duration-200 focus:ring-2 ${
-                    errors.name
-                      ? "border-red-500 focus:ring-red-500/20"
-                      : "border-slate-800 focus:border-blue-500 focus:ring-blue-500/20"
-                  }`}
-                />
+                <div className="relative mt-2">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                    <User className="h-4 w-4" />
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="John Doe"
+                    {...register("name")}
+                    className={`w-full rounded-xl border bg-slate-50/30 py-2.5 pl-10 pr-4 text-slate-900 placeholder-slate-400 outline-none transition duration-200 focus:bg-white focus:ring-4 ${
+                      errors.name
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-500/10"
+                        : "border-slate-200 focus:border-blue-500 focus:ring-blue-500/10"
+                    }`}
+                  />
+                </div>
                 {errors.name && (
-                  <p className="mt-1 text-xs text-red-400">
-                    {errors.name.message}
-                  </p>
+                  <p className="mt-1 text-xs font-semibold text-red-500">{errors.name.message}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-300">
+                <label className="block text-sm font-bold text-slate-700">
                   Email Address
                 </label>
-                <input
-                  type="email"
-                  placeholder="john@example.com"
-                  {...register("email")}
-                  className={`mt-2 w-full rounded-lg border bg-slate-950 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition duration-200 focus:ring-2 ${
-                    errors.email
-                      ? "border-red-500 focus:ring-red-500/20"
-                      : "border-slate-800 focus:border-blue-500 focus:ring-blue-500/20"
-                  }`}
-                />
+                <div className="relative mt-2">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                    <Mail className="h-4 w-4" />
+                  </span>
+                  <input
+                    type="email"
+                    placeholder="john@example.com"
+                    {...register("email")}
+                    className={`w-full rounded-xl border bg-slate-50/30 py-2.5 pl-10 pr-4 text-slate-900 placeholder-slate-400 outline-none transition duration-200 focus:bg-white focus:ring-4 ${
+                      errors.email
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-500/10"
+                        : "border-slate-200 focus:border-blue-500 focus:ring-blue-500/10"
+                    }`}
+                  />
+                </div>
                 {errors.email && (
-                  <p className="mt-1 text-xs text-red-400">
-                    {errors.email.message}
-                  </p>
+                  <p className="mt-1 text-xs font-semibold text-red-500">{errors.email.message}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-300">
+                <label className="block text-sm font-bold text-slate-700">
                   Password
                 </label>
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  {...register("password")}
-                  className={`mt-2 w-full rounded-lg border bg-slate-950 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition duration-200 focus:ring-2 ${
-                    errors.password
-                      ? "border-red-500 focus:ring-red-500/20"
-                      : "border-slate-800 focus:border-blue-500 focus:ring-blue-500/20"
-                  }`}
-                />
+                <div className="relative mt-2">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                    <Lock className="h-4 w-4" />
+                  </span>
+                  <input
+                    type="password"
+                    placeholder="••••••••"
+                    {...register("password")}
+                    className={`w-full rounded-xl border bg-slate-50/30 py-2.5 pl-10 pr-4 text-slate-900 placeholder-slate-400 outline-none transition duration-200 focus:bg-white focus:ring-4 ${
+                      errors.password
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-500/10"
+                        : "border-slate-200 focus:border-blue-500 focus:ring-blue-500/10"
+                    }`}
+                  />
+                </div>
                 {errors.password && (
-                  <p className="mt-1 text-xs text-red-400">
-                    {errors.password.message}
-                  </p>
+                  <p className="mt-1 text-xs font-semibold text-red-500">{errors.password.message}</p>
                 )}
               </div>
             </div>
 
             {/* Column 2: Travel Preferences */}
             <div className="space-y-4">
-              <h3 className="text-lg font-bold text-blue-400">Travel Profile</h3>
+              <h3 className="font-display text-lg font-bold text-blue-600 border-b border-slate-50 pb-2">Travel Profile</h3>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-300">
+                <label className="block text-sm font-bold text-slate-700">
                   Home/Starting City
                 </label>
-                <input
-                  type="text"
-                  placeholder="Mumbai"
-                  {...register("homeCity")}
-                  className={`mt-2 w-full rounded-lg border bg-slate-950 px-4 py-2.5 text-slate-100 outline-none transition duration-200 focus:ring-2 ${
-                    errors.homeCity
-                      ? "border-red-500 focus:ring-red-500/20"
-                      : "border-slate-800 focus:border-blue-500 focus:ring-blue-500/20"
-                  }`}
-                />
+                <div className="relative mt-2">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                    <MapPin className="h-4 w-4" />
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Visakhapatnam"
+                    {...register("homeCity")}
+                    className={`w-full rounded-xl border bg-slate-50/30 py-2.5 pl-10 pr-4 text-slate-900 placeholder-slate-400 outline-none transition duration-200 focus:bg-white focus:ring-4 ${
+                      errors.homeCity
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-500/10"
+                        : "border-slate-200 focus:border-blue-500 focus:ring-blue-500/10"
+                    }`}
+                  />
+                </div>
                 {errors.homeCity && (
-                  <p className="mt-1 text-xs text-red-400">
-                    {errors.homeCity.message}
-                  </p>
+                  <p className="mt-1 text-xs font-semibold text-red-500">{errors.homeCity.message}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-300">
+                <label className="block text-sm font-bold text-slate-700">
                   Preferred Travel Style
                 </label>
                 <select
                   {...register("travelStyle")}
-                  className="mt-2 w-full rounded-lg border border-slate-800 bg-slate-950 px-4 py-2.5 text-slate-100 outline-none transition focus:border-blue-500"
+                  className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50/30 px-4 py-2.5 text-slate-900 outline-none transition duration-200 focus:bg-white focus:ring-4 focus:border-blue-500 focus:ring-blue-500/10"
                 >
                   <option value="Budget">Budget</option>
                   <option value="Standard">Standard</option>
@@ -213,23 +240,26 @@ export default function SignupPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-300">
+                <label className="block text-sm font-bold text-slate-700">
                   Default Trip Budget (₹)
                 </label>
-                <input
-                  type="number"
-                  placeholder="20000"
-                  {...register("budget", { valueAsNumber: true })}
-                  className={`mt-2 w-full rounded-lg border bg-slate-950 px-4 py-2.5 text-slate-100 outline-none transition duration-200 focus:ring-2 ${
-                    errors.budget
-                      ? "border-red-500 focus:ring-red-500/20"
-                      : "border-slate-800 focus:border-blue-500 focus:ring-blue-500/20"
-                  }`}
-                />
+                <div className="relative mt-2">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                    <Coins className="h-4 w-4" />
+                  </span>
+                  <input
+                    type="number"
+                    placeholder="20000"
+                    {...register("budget", { valueAsNumber: true })}
+                    className={`w-full rounded-xl border bg-slate-50/30 py-2.5 pl-10 pr-4 text-slate-900 placeholder-slate-400 outline-none transition duration-200 focus:bg-white focus:ring-4 ${
+                      errors.budget
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-500/10"
+                        : "border-slate-200 focus:border-blue-500 focus:ring-blue-500/10"
+                    }`}
+                  />
+                </div>
                 {errors.budget && (
-                  <p className="mt-1 text-xs text-red-400">
-                    {errors.budget.message}
-                  </p>
+                  <p className="mt-1 text-xs font-semibold text-red-500">{errors.budget.message}</p>
                 )}
               </div>
             </div>
@@ -237,7 +267,7 @@ export default function SignupPage() {
 
           {/* Interests */}
           <div className="pt-2">
-            <label className="block text-sm font-semibold text-slate-300 mb-3">
+            <label className="block text-sm font-bold text-slate-700 mb-3">
               Select Your Travel Interests (Choose at least 1)
             </label>
             <div className="flex flex-wrap gap-2.5">
@@ -248,10 +278,10 @@ export default function SignupPage() {
                     key={interest}
                     type="button"
                     onClick={() => toggleInterest(interest)}
-                    className={`rounded-full px-4 py-2 text-sm font-semibold transition duration-200 border ${
+                    className={`rounded-full px-5 py-2 text-xs font-bold transition-all duration-200 border ${
                       isSelected
-                        ? "bg-blue-600 border-blue-500 text-white shadow-md shadow-blue-500/20"
-                        : "bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-900"
+                        ? "bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/20"
+                        : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 cursor-pointer"
                     }`}
                   >
                     {interest}
@@ -261,47 +291,30 @@ export default function SignupPage() {
             </div>
           </div>
 
-          <Button
+          {/* Submit button */}
+          <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex items-center justify-center py-3 bg-gradient-to-r from-blue-600 to-indigo-600 font-bold hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 mt-4"
+            className="w-full mt-4 flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 shadow-lg shadow-blue-500/10 hover:shadow-blue-500/20 disabled:opacity-50 transition-all hover:-translate-y-0.5 cursor-pointer"
           >
             {isLoading ? (
-              <span className="flex items-center gap-2">
-                <svg
-                  className="h-5 w-5 animate-spin text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Creating account...
-              </span>
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                <span>Creating account...</span>
+              </>
             ) : (
               "Sign Up"
             )}
-          </Button>
+          </button>
         </form>
 
-        <div className="mt-8 text-center text-sm text-slate-400">
+        <div className="mt-8 text-center text-sm font-semibold text-slate-500">
           Already have an account?{" "}
-          <Link href="/login" className="font-bold text-blue-400 hover:underline">
+          <Link href="/login" className="font-bold text-blue-600 hover:text-blue-700 hover:underline">
             Sign in
           </Link>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
