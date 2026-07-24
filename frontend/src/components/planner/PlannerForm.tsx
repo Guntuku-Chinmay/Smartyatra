@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Compass, Wallet, Users, Car, Smile, Check, ArrowRight, Loader2, Sparkles, CalendarDays } from "lucide-react";
+import { Compass, Wallet, Users, Car, Smile, Check, ArrowRight, Loader2, Sparkles, CalendarDays, MapPin } from "lucide-react";
 
 import api from "@/services/api";
 import { createTrip, createItinerary, TripCreateInput } from "@/services/planner.service";
