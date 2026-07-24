@@ -6,11 +6,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Compass, Wallet, Users, Car, Smile, Check } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Compass, Wallet, Users, Car, Smile, Check, ArrowRight, Loader2, Sparkles, CalendarDays } from "lucide-react";
 
 import api from "@/services/api";
 import { createTrip, createItinerary, TripCreateInput } from "@/services/planner.service";
-import Button from "@/components/ui/Button";
 
 interface City {
   id: number;
@@ -40,7 +40,6 @@ const availableInterests = [
   "Photography",
 ];
 
-// Activity pool for auto-generating itineraries based on city
 interface ItineraryTemplate {
   time: string;
   activity: string;
@@ -163,7 +162,6 @@ export default function PlannerForm() {
       const selectedCityObj = cities.find((c) => c.id === parseInt(data.cityId));
       const cityName = selectedCityObj ? selectedCityObj.name : "My Trip";
 
-      // 1. Create the Trip on the backend
       const tripInput: TripCreateInput = {
         name: `Trip to ${cityName}`,
         start_date: data.startDate,
@@ -175,7 +173,6 @@ export default function PlannerForm() {
 
       const createdTrip = await createTrip(tripInput);
 
-      // 2. Initialize the Budget tracking
       await api.post("/budgets/", {
         estimated_cost: data.budget,
         actual_cost: 0,
@@ -183,13 +180,11 @@ export default function PlannerForm() {
         trip_id: createdTrip.id,
       });
 
-      // 3. Generate day-wise itineraries
       const start = new Date(data.startDate);
       const end = new Date(data.endDate);
       const diffTime = Math.abs(end.getTime() - start.getTime());
       const durationDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
-      // Select template activities based on destination name
       const cityKey = cityName.toLowerCase();
       let templates = defaultTemplates;
       for (const [key, val] of Object.entries(activityTemplates)) {
@@ -199,21 +194,16 @@ export default function PlannerForm() {
         }
       }
 
-      // Add itineraries day-by-day (2 activities per day)
       const itineraryPromises = [];
       for (let day = 1; day <= durationDays; day++) {
-        // Retrieve morning and afternoon templates cyclically
         const morningTemplate = templates[((day - 1) * 2) % templates.length];
         const afternoonTemplate = templates[((day - 1) * 2 + 1) % templates.length];
 
-        // We fetch a mock destination stop in the city if any exist
-        // For simplicity, we link to a placeholder destination ID (or query city destinations)
         const destResponse = await api.get(`/destinations/city/${data.cityId}`);
         const dbDestinations = destResponse.data;
         const morningDestId = dbDestinations.length > 0 ? dbDestinations[0].id : 1;
         const afternoonDestId = dbDestinations.length > 1 ? dbDestinations[1].id : morningDestId;
 
-        // Morning Itinerary
         itineraryPromises.push(
           createItinerary({
             trip_id: createdTrip.id,
@@ -224,7 +214,6 @@ export default function PlannerForm() {
           })
         );
 
-        // Afternoon Itinerary
         itineraryPromises.push(
           createItinerary({
             trip_id: createdTrip.id,
@@ -237,11 +226,7 @@ export default function PlannerForm() {
       }
 
       await Promise.all(itineraryPromises);
-
-      // Invalidate trips queries so dashboard updates
       queryClient.invalidateQueries({ queryKey: ["trips"] });
-
-      // Redirect to itinerary view
       router.push(`/planner/itinerary/${createdTrip.id}`);
     } catch (err) {
       console.error(err);
@@ -253,278 +238,321 @@ export default function PlannerForm() {
 
   return (
     <div className="w-full max-w-3xl mx-auto">
-      {/* Progress Tracker */}
+      {/* Progress tracker stepper */}
       <div className="mb-10 flex items-center justify-between px-4">
         {[1, 2, 3].map((s) => (
           <div key={s} className="flex items-center gap-2">
             <div
               className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold border transition ${
                 step >= s
-                  ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/20"
+                  ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/25"
                   : "bg-white border-slate-200 text-slate-400"
               }`}
             >
               {step > s ? <Check className="h-5 w-5" /> : s}
             </div>
-            <span
-              className={`text-sm font-bold ${
-                step >= s ? "text-slate-800" : "text-slate-400"
-              }`}
-            >
+            <span className={`text-xs md:text-sm font-bold ${step >= s ? "text-slate-800" : "text-slate-400"}`}>
               {s === 1 ? "Basics" : s === 2 ? "Details" : "Interests"}
             </span>
-            {s < 3 && <div className="h-[2px] w-12 bg-slate-200 sm:w-20"></div>}
+            {s < 3 && <div className="h-[2px] w-12 bg-slate-200 sm:w-20" />}
           </div>
         ))}
       </div>
 
       {formError && (
-        <div className="mb-6 rounded-lg border border-red-500/20 bg-red-50/50 p-4 text-sm text-red-600">
+        <div className="mb-6 rounded-xl border border-red-100 bg-red-50 p-4 text-xs font-semibold text-red-600">
           ⚠️ {formError}
         </div>
       )}
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="space-y-8 rounded-2xl border border-slate-200 bg-white p-8 shadow-md"
-      >
-        {/* Step 1: Basics */}
-        {step === 1 && (
-          <div className="space-y-6">
-            <h3 className="text-xl font-bold border-b border-slate-100 pb-3 flex items-center gap-2 text-slate-800">
-              <Compass className="h-5 w-5 text-blue-600" />
-              <span>Where and when are you going?</span>
-            </h3>
+      {/* Steps Animating Wrapper */}
+      <div className="overflow-hidden rounded-3xl border border-slate-100 bg-white p-8 shadow-2xl shadow-slate-200/50">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <AnimatePresence mode="wait">
+            {step === 1 && (
+              <motion.div
+                key="step1"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-6"
+              >
+                <h3 className="font-display text-xl font-black flex items-center gap-2 text-slate-900 border-b border-slate-50 pb-3">
+                  <Compass className="h-5 w-5 text-blue-600" />
+                  <span>Where and when are you traveling?</span>
+                </h3>
 
-            <div className="grid gap-6">
-              <div>
-                <label className="mb-2 block font-semibold text-slate-700">
-                  Select Destination
-                </label>
-                <select
-                  {...register("cityId")}
-                  className={`w-full rounded-lg border p-3.5 outline-none transition focus:border-blue-500 bg-white text-slate-800 ${
-                    errors.cityId ? "border-red-500" : "border-slate-300"
-                  }`}
-                >
-                  <option value="">-- Choose a city --</option>
-                  {cities.map((city) => (
-                    <option key={city.id} value={city.id.toString()}>
-                      {city.name}, {city.state}
-                    </option>
-                  ))}
-                </select>
-                {errors.cityId && (
-                  <p className="mt-1 text-xs text-red-400">{errors.cityId.message}</p>
-                )}
-              </div>
+                <div className="space-y-5">
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700">Select Destination</label>
+                    <div className="relative mt-2">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                        <MapPin className="h-4 w-4" />
+                      </span>
+                      <select
+                        {...register("cityId")}
+                        className={`w-full rounded-xl border bg-slate-50/30 py-3 pl-10 pr-4 text-sm text-slate-800 outline-none transition focus:bg-white focus:ring-4 ${
+                          errors.cityId
+                            ? "border-red-300 focus:border-red-500 focus:ring-red-500/10"
+                            : "border-slate-200 focus:border-blue-500 focus:ring-blue-500/10"
+                        }`}
+                      >
+                        <option value="">-- Choose destination --</option>
+                        {cities.map((city) => (
+                          <option key={city.id} value={city.id.toString()}>
+                            {city.name}, {city.state}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    {errors.cityId && (
+                      <p className="mt-1.5 text-xs font-semibold text-red-500">{errors.cityId.message}</p>
+                    )}
+                  </div>
 
-              <div className="grid gap-6 md:grid-cols-2">
-                <div>
-                  <label className="mb-2 block font-semibold text-slate-700">
-                    Start Date
-                  </label>
-                  <input
-                    type="date"
-                    {...register("startDate")}
-                    className={`w-full rounded-lg border p-3 outline-none transition focus:border-blue-500 text-slate-800 ${
-                      errors.startDate ? "border-red-500" : "border-slate-300"
-                    }`}
-                  />
-                  {errors.startDate && (
-                    <p className="mt-1 text-xs text-red-400">
-                      {errors.startDate.message}
-                    </p>
-                  )}
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <div>
+                      <label className="block text-sm font-bold text-slate-700">Start Date</label>
+                      <div className="relative mt-2">
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                          <CalendarDays className="h-4 w-4" />
+                        </span>
+                        <input
+                          type="date"
+                          {...register("startDate")}
+                          className={`w-full rounded-xl border bg-slate-50/30 py-3 pl-10 pr-4 text-sm text-slate-800 outline-none transition focus:bg-white focus:ring-4 ${
+                            errors.startDate
+                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/10"
+                              : "border-slate-200 focus:border-blue-500 focus:ring-blue-500/10"
+                          }`}
+                        />
+                      </div>
+                      {errors.startDate && (
+                        <p className="mt-1.5 text-xs font-semibold text-red-500">{errors.startDate.message}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-bold text-slate-700">End Date</label>
+                      <div className="relative mt-2">
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                          <CalendarDays className="h-4 w-4" />
+                        </span>
+                        <input
+                          type="date"
+                          {...register("endDate")}
+                          className={`w-full rounded-xl border bg-slate-50/30 py-3 pl-10 pr-4 text-sm text-slate-800 outline-none transition focus:bg-white focus:ring-4 ${
+                            errors.endDate
+                              ? "border-red-300 focus:border-red-500 focus:ring-red-500/10"
+                              : "border-slate-200 focus:border-blue-500 focus:ring-blue-500/10"
+                          }`}
+                        />
+                      </div>
+                      {errors.endDate && (
+                        <p className="mt-1.5 text-xs font-semibold text-red-500">{errors.endDate.message}</p>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="mb-2 block font-semibold text-slate-700">
-                    End Date
-                  </label>
-                  <input
-                    type="date"
-                    {...register("endDate")}
-                    className={`w-full rounded-lg border p-3 outline-none transition focus:border-blue-500 text-slate-800 ${
-                      errors.endDate ? "border-red-500" : "border-slate-300"
-                    }`}
-                  />
-                  {errors.endDate && (
-                    <p className="mt-1 text-xs text-red-400">
-                      {errors.endDate.message}
-                    </p>
-                  )}
+                <div className="flex justify-end pt-4">
+                  <button
+                    type="button"
+                    onClick={nextStep}
+                    disabled={!watch("cityId") || !watch("startDate") || !watch("endDate")}
+                    className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 shadow-lg shadow-blue-500/10 transition-colors disabled:opacity-50 cursor-pointer"
+                  >
+                    <span>Continue</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            )}
 
-            <div className="flex justify-end pt-4">
-              <Button
-                type="button"
-                onClick={nextStep}
-                disabled={!watch("cityId") || !watch("startDate") || !watch("endDate")}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-bold"
+            {step === 2 && (
+              <motion.div
+                key="step2"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-6"
               >
-                Continue
-              </Button>
-            </div>
-          </div>
-        )}
+                <h3 className="font-display text-xl font-black flex items-center gap-2 text-slate-900 border-b border-slate-50 pb-3">
+                  <Wallet className="h-5 w-5 text-blue-600" />
+                  <span>Budget, travelers & transit details</span>
+                </h3>
 
-        {/* Step 2: Trip Details */}
-        {step === 2 && (
-          <div className="space-y-6">
-            <h3 className="text-xl font-bold border-b border-slate-100 pb-3 flex items-center gap-2 text-slate-800">
-              <Wallet className="h-5 w-5 text-blue-600" />
-              <span>Budget, travelers & transport details</span>
-            </h3>
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700">Total Budget (₹)</label>
+                    <div className="relative mt-2">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                        <Wallet className="h-4 w-4" />
+                      </span>
+                      <input
+                        type="number"
+                        placeholder="20000"
+                        {...register("budget", { valueAsNumber: true })}
+                        className={`w-full rounded-xl border bg-slate-50/30 py-3 pl-10 pr-4 text-sm text-slate-800 outline-none transition focus:bg-white focus:ring-4 ${
+                          errors.budget
+                            ? "border-red-300 focus:border-red-500 focus:ring-red-500/10"
+                            : "border-slate-200 focus:border-blue-500 focus:ring-blue-500/10"
+                        }`}
+                      />
+                    </div>
+                    {errors.budget && (
+                      <p className="mt-1.5 text-xs font-semibold text-red-500">{errors.budget.message}</p>
+                    )}
+                  </div>
 
-            <div className="grid gap-6 md:grid-cols-2">
-              <div>
-                <label className="mb-2 block font-semibold text-slate-700 flex items-center gap-1.5">
-                  <Wallet className="h-4 w-4 text-slate-400" />
-                  <span>Total Budget (₹)</span>
-                </label>
-                <input
-                  type="number"
-                  placeholder="20000"
-                  {...register("budget", { valueAsNumber: true })}
-                  className={`w-full rounded-lg border p-3 outline-none transition focus:border-blue-500 text-slate-800 ${
-                    errors.budget ? "border-red-500" : "border-slate-300"
-                  }`}
-                />
-                {errors.budget && (
-                  <p className="mt-1 text-xs text-red-400">{errors.budget.message}</p>
-                )}
-              </div>
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700">Number of Travelers</label>
+                    <div className="relative mt-2">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                        <Users className="h-4 w-4" />
+                      </span>
+                      <input
+                        type="number"
+                        min={1}
+                        placeholder="1"
+                        {...register("travelers", { valueAsNumber: true })}
+                        className={`w-full rounded-xl border bg-slate-50/30 py-3 pl-10 pr-4 text-sm text-slate-800 outline-none transition focus:bg-white focus:ring-4 ${
+                          errors.travelers
+                            ? "border-red-300 focus:border-red-500 focus:ring-red-500/10"
+                            : "border-slate-200 focus:border-blue-500 focus:ring-blue-500/10"
+                        }`}
+                      />
+                    </div>
+                    {errors.travelers && (
+                      <p className="mt-1.5 text-xs font-semibold text-red-500">{errors.travelers.message}</p>
+                    )}
+                  </div>
 
-              <div>
-                <label className="mb-2 block font-semibold text-slate-700 flex items-center gap-1.5">
-                  <Users className="h-4 w-4 text-slate-400" />
-                  <span>Number of Travelers</span>
-                </label>
-                <input
-                  type="number"
-                  min={1}
-                  placeholder="1"
-                  {...register("travelers", { valueAsNumber: true })}
-                  className={`w-full rounded-lg border p-3 outline-none transition focus:border-blue-500 text-slate-800 ${
-                    errors.travelers ? "border-red-500" : "border-slate-300"
-                  }`}
-                />
-                {errors.travelers && (
-                  <p className="mt-1 text-xs text-red-400">
-                    {errors.travelers.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="mb-2 block font-semibold text-slate-700">
-                  Travel Style
-                </label>
-                <select
-                  {...register("travelStyle")}
-                  className="w-full rounded-lg border border-slate-300 p-3 bg-white text-slate-800 outline-none focus:border-blue-500"
-                >
-                  <option value="Budget">Budget</option>
-                  <option value="Standard">Standard</option>
-                  <option value="Luxury">Luxury</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="mb-2 block font-semibold text-slate-700 flex items-center gap-1.5">
-                  <Car className="h-4 w-4 text-slate-400" />
-                  <span>Transport Mode</span>
-                </label>
-                <select
-                  {...register("travelMode")}
-                  className="w-full rounded-lg border border-slate-300 p-3 bg-white text-slate-800 outline-none focus:border-blue-500"
-                >
-                  <option value="DRIVING">Driving / Rental Car</option>
-                  <option value="WALKING">Walking</option>
-                  <option value="BICYCLING">Bicycle</option>
-                  <option value="TRANSIT">Public Transit</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="flex justify-between pt-4 border-t border-slate-100">
-              <Button variant="secondary" onClick={prevStep} className="font-bold">
-                Back
-              </Button>
-              <Button
-                type="button"
-                onClick={nextStep}
-                disabled={!watch("budget") || !watch("travelers")}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-bold"
-              >
-                Continue
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 3: Interests & Submit */}
-        {step === 3 && (
-          <div className="space-y-6">
-            <h3 className="text-xl font-bold border-b border-slate-100 pb-3 flex items-center gap-2 text-slate-800">
-              <Smile className="h-5 w-5 text-blue-600" />
-              <span>Choose your travel interests</span>
-            </h3>
-
-            <div>
-              <label className="mb-4 block font-semibold text-slate-600 text-sm">
-                Select one or more interests to help customize daily activities (Choose at least 1)
-              </label>
-
-              <div className="flex flex-wrap gap-3">
-                {availableInterests.map((interest) => {
-                  const isSelected = selectedInterests.includes(interest);
-                  return (
-                    <button
-                      key={interest}
-                      type="button"
-                      onClick={() => toggleInterest(interest)}
-                      className={`rounded-full px-5 py-2.5 text-sm font-bold border transition duration-200 ${
-                        isSelected
-                          ? "bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20"
-                          : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
-                      }`}
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700">Preferred Travel Style</label>
+                    <select
+                      {...register("travelStyle")}
+                      className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50/30 px-4 py-3 text-sm text-slate-800 outline-none transition focus:bg-white focus:ring-4 focus:border-blue-500 focus:ring-blue-500/10"
                     >
-                      {interest}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+                      <option value="Budget">Budget</option>
+                      <option value="Standard">Standard</option>
+                      <option value="Luxury">Luxury</option>
+                    </select>
+                  </div>
 
-            <div className="flex justify-between pt-6 border-t border-slate-100">
-              <Button variant="secondary" onClick={prevStep} className="font-bold">
-                Back
-              </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting || selectedInterests.length === 0}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 font-extrabold text-white hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-blue-500/25 px-8 flex items-center gap-2"
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700">Transport Mode</label>
+                    <div className="relative mt-2">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                        <Car className="h-4 w-4" />
+                      </span>
+                      <select
+                        {...register("travelMode")}
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50/30 py-3 pl-10 pr-4 text-sm text-slate-800 outline-none transition focus:bg-white focus:ring-4 focus:border-blue-500 focus:ring-blue-500/10"
+                      >
+                        <option value="DRIVING">Driving / Rental Car</option>
+                        <option value="WALKING">Walking</option>
+                        <option value="BICYCLING">Bicycle</option>
+                        <option value="TRANSIT">Public Transit</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-between pt-4 border-t border-slate-50">
+                  <button
+                    type="button"
+                    onClick={prevStep}
+                    className="rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold px-6 py-3 transition-colors cursor-pointer"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    onClick={nextStep}
+                    disabled={!watch("budget") || !watch("travelers")}
+                    className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 shadow-lg shadow-blue-500/10 transition-colors disabled:opacity-50 cursor-pointer"
+                  >
+                    <span>Continue</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {step === 3 && (
+              <motion.div
+                key="step3"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-6"
               >
-                {isSubmitting ? (
-                  <>
-                    <svg className="h-5 w-5 animate-spin text-white" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span>Generating Itinerary...</span>
-                  </>
-                ) : (
-                  "Generate AI Plan"
-                )}
-              </Button>
-            </div>
-          </div>
-        )}
-      </form>
+                <h3 className="font-display text-xl font-black flex items-center gap-2 text-slate-900 border-b border-slate-50 pb-3">
+                  <Smile className="h-5 w-5 text-blue-600" />
+                  <span>Select your travel interests</span>
+                </h3>
+
+                <div className="space-y-5">
+                  <p className="text-xs font-semibold text-slate-400">
+                    Select interests to help customize daily activities (Choose at least 1).
+                  </p>
+
+                  <div className="flex flex-wrap gap-2.5">
+                    {availableInterests.map((interest) => {
+                      const isSelected = selectedInterests.includes(interest);
+                      return (
+                        <button
+                          key={interest}
+                          type="button"
+                          onClick={() => toggleInterest(interest)}
+                          className={`rounded-full px-5 py-2.5 text-xs font-bold transition-all border ${
+                            isSelected
+                              ? "bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/20"
+                              : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 cursor-pointer"
+                          }`}
+                        >
+                          {interest}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="flex justify-between pt-6 border-t border-slate-50">
+                  <button
+                    type="button"
+                    onClick={prevStep}
+                    className="rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold px-6 py-3 transition-colors cursor-pointer"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting || selectedInterests.length === 0}
+                    className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 font-bold text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/10 transition-all hover:-translate-y-0.5 disabled:opacity-50 px-8 py-3.5 cursor-pointer"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        <span>Generating Itinerary...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-5 w-5 animate-pulse" />
+                        <span>Generate AI Plan</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </form>
+      </div>
     </div>
   );
 }
