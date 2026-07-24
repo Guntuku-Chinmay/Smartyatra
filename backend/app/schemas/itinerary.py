@@ -1,26 +1,25 @@
 from datetime import time
-
 from pydantic import BaseModel, ConfigDict
-
-from app.schemas.common import TimestampSchema
+from app.schemas.common import ORMBaseSchema
 
 class ItineraryBase(BaseModel):
     day_number: int
-    visit_time: time
+    start_time: time | None = None
+    end_time: time | None = None
     notes: str | None = None
     trip_id: int
     destination_id: int
 
 class ItineraryCreate(ItineraryBase):
-    trip_id: int
-    destination_id: int
-    day_number: int
+    pass
+
+class ItineraryUpdate(BaseModel):
+    day_number: int | None = None
     start_time: time | None = None
     end_time: time | None = None
     notes: str | None = None
 
-
-class ItineraryResponse(TimestampSchema):
+class ItineraryResponse(ORMBaseSchema):
     id: int
     trip_id: int
     destination_id: int
@@ -28,15 +27,3 @@ class ItineraryResponse(TimestampSchema):
     start_time: time | None
     end_time: time | None
     notes: str | None
-
-    model_config = ConfigDict(from_attributes=True)
-
-class ItineraryUpdate(BaseModel):
-    day_number: int | None = None
-    visit_time: time | None = None
-    notes: str | None = None
-
-class ItineraryResponse(ItineraryBase):
-    id: int
-
-    model_config = ConfigDict(from_attributes=True)

@@ -1,6 +1,5 @@
 from pydantic import BaseModel, ConfigDict, Field
-
-from app.schemas.common import TimestampSchema
+from app.schemas.common import ORMBaseSchema
 
 
 class CityCreate(BaseModel):
@@ -15,10 +14,8 @@ class CityUpdate(BaseModel):
     country: str | None = Field(default=None, max_length=100)
 
 
-class CityResponse(TimestampSchema):
+class CityResponse(ORMBaseSchema):
     id: int
     name: str
     state: str
     country: str
-
-    model_config = ConfigDict(from_attributes=True)

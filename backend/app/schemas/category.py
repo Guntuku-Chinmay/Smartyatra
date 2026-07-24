@@ -1,6 +1,5 @@
 from pydantic import BaseModel, ConfigDict, Field
-
-from app.schemas.common import TimestampSchema
+from app.schemas.common import ORMBaseSchema
 
 
 class CategoryCreate(BaseModel):
@@ -15,10 +14,8 @@ class CategoryUpdate(BaseModel):
     icon: str | None = Field(default=None, max_length=100)
 
 
-class CategoryResponse(TimestampSchema):
+class CategoryResponse(ORMBaseSchema):
     id: int
     name: str
     description: str
     icon: str | None
-
-    model_config = ConfigDict(from_attributes=True)
