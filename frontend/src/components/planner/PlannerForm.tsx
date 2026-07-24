@@ -118,6 +118,12 @@ export default function PlannerForm() {
     },
   });
 
+  const cityIdVal = watch("cityId");
+  const startDateVal = watch("startDate");
+  const endDateVal = watch("endDate");
+  const budgetVal = watch("budget");
+  const travelersVal = watch("travelers");
+
   // Pre-fill destination if query parameter exists
   const destParam = searchParams.get("destination");
   useEffect(() => {
@@ -360,7 +366,7 @@ export default function PlannerForm() {
                   <button
                     type="button"
                     onClick={nextStep}
-                    disabled={!watch("cityId") || !watch("startDate") || !watch("endDate")}
+                    disabled={!cityIdVal || !startDateVal || !endDateVal}
                     className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 shadow-lg shadow-blue-500/10 transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     <span>Continue</span>
@@ -472,7 +478,7 @@ export default function PlannerForm() {
                   <button
                     type="button"
                     onClick={nextStep}
-                    disabled={!watch("budget") || !watch("travelers")}
+                    disabled={!budgetVal || !travelersVal}
                     className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 shadow-lg shadow-blue-500/10 transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     <span>Continue</span>

@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles, MapPin, Compass } from "lucide-react";
-import Button from "@/components/ui/Button";
+import { ArrowRight, Sparkles, Compass } from "lucide-react";
 
 export default function Hero() {
   return (

@@ -5,13 +5,12 @@ import { useParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Calendar, Clock, MapPin, Printer, Edit2, Save, Sparkles, Loader2, Coins, Milestone } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowLeft, Calendar, Clock, MapPin, Printer, Edit2, Save, Loader2, Coins, Milestone } from "lucide-react";
 
 import { getTrip, getItineraries, ItineraryEntry, Trip } from "@/services/planner.service";
 import { getBudgets, updateBudget, Budget } from "@/services/budget.service";
 import { getDestinations } from "@/services/destination.service";
-import { formatRating } from "@/utils/formatRating";
 
 const MapComponent = dynamic(() => import("@/components/map/Map"), {
   ssr: false,

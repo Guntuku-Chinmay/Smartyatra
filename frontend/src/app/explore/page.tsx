@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Compass, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { SearchBar, FilterBar, DestinationGrid, LoadingGrid } from "@/components/explore";
 import { useDestinations } from "@/hooks/useDestinations";
 
