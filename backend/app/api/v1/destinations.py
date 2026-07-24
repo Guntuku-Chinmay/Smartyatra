@@ -107,3 +107,15 @@ def get_destinations_by_category(
 ):
     service = DestinationService(DestinationRepository(db))
     return service.get_destinations_by_category(category_id)
+
+
+from app.ai.recommendation import RecommendationEngine
+from app.ai.recommendation.models import UserPreferences, RecommendationResult
+
+@router.post("/recommend", response_model=list[RecommendationResult])
+def recommend_destinations(
+    preferences: UserPreferences,
+    db: Session = Depends(get_db),
+):
+    engine = RecommendationEngine(db)
+    return engine.recommend(preferences)

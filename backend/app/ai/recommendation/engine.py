@@ -14,10 +14,12 @@ from .scorer import (
 from .weights import DEFAULT_WEIGHTS
 
 
+from sqlalchemy.orm import Session
+
 class RecommendationEngine:
 
-    def __init__(self, dataset_path: str):
-        self.loader = DestinationLoader(dataset_path)
+    def __init__(self, db: Session):
+        self.loader = DestinationLoader(db)
 
     def recommend(
         self,
