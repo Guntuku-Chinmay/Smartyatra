@@ -99,6 +99,6 @@ export async function getAIRecommendations(preferences: {
   start_longitude?: number;
   travel_mode?: string;
 }): Promise<AIRecommendationResult[]> {
-  const response = await api.post("/destinations/recommend", preferences);
+  const response = await api.post("/ai/recommend", preferences);
   return response.data;
 }
