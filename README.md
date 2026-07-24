@@ -1,4 +1,3 @@
-```markdown
 # 🧭 Smartyatra
 
 > AI-Powered Smart Travel Planner for Andhra Pradesh
@@ -9,173 +8,107 @@ The project combines modern full-stack development, geospatial technologies, opt
 
 ---
 
-## 🚀 Project Vision
+## ✨ Features (Version 1 - Completed)
 
-Planning a trip often requires switching between multiple applications for maps, travel blogs, hotel information, route planning, and itinerary creation.
-
-Smartyatra aims to solve this problem by providing an integrated travel planning experience where users can:
-
-- Discover tourist attractions across Andhra Pradesh
-- Plan optimized multi-day trips
-- Estimate travel expenses
-- Generate personalized AI-powered itineraries
-- Explore destinations through an interactive map
+- **Interactive Tourism Map**: OpenStreetMap visual markers and trip path rendering with Leaflet.
+- **Tourist Destination Explorer**: Detailed views with averages costs, local reviews, rating tallies, and travel season guides.
+- **Smart Route Optimizer**: Traveling Salesperson Problem solvers sorting multi-stop visits efficiently using exact permutations or greedy nearest-neighbor fallbacks.
+- **Travel Budget Estimation**: Complete hotel rate forecasts, food allowance computations, and mileage transit fuel logs.
+- **AI-Powered Itinerary Generation**: Interactive travel generator powered by Google Gemini API with customized local rule-based itinerary fallback support.
+- **Responsive Layout**: Mobile-first fluid grids, custom user navigation drawers, loading overlays, and dark-theme configurations.
 
 ---
 
-## ✨ Features (Version 1)
-
-- 🗺️ Interactive Tourism Map
-- 📍 Tourist Destination Explorer
-- 🛣️ Smart Route Planning
-- 💰 Travel Budget Estimation
-- 🤖 AI-Powered Itinerary Generation
-- 📱 Responsive User Interface
-
----
-
-## 🔮 Planned Features (Version 2)
-
-- 🌦️ Weather-Aware Route Planning
-- 🎯 Personalized Destination Recommendation Engine
-- 🤖 Multi-Agent AI Planning System
-- 📄 Offline PDF Itinerary Export
-- 🌍 Expansion Beyond Andhra Pradesh
-- 🌐 Multi-language Support
-- 📊 Travel Analytics Dashboard
-
----
-
-## 🏗️ Tech Stack
-
-### Frontend
-
-- Next.js
-- TypeScript
-- Tailwind CSS
-- React Query
-- Leaflet
-
-### Backend
-
-- FastAPI
-- SQLAlchemy
-- Alembic
-- Pydantic
-
-### Database
-
-- PostgreSQL
-- PostGIS
-
-### AI
-
-- Google Gemini API
-
-### Deployment
-
-- Vercel
-- Render
-- Supabase
-
----
-
-## 📂 Project Structure
+## 🏗️ Project Architecture
 
 ```
-
-smartyatra/
-
-├── frontend/
+Smartyatra/
 ├── backend/
-├── database/
-├── docs/
-├── assets/
-├── .github/
-├── README.md
-
+│   ├── app/
+│   │   ├── ai/            # Routing, budget, and Gemini LLM submodules
+│   │   ├── api/           # Router registries and API endpoints
+│   │   ├── core/          # App settings, logging, and exception handlers
+│   │   ├── db/            # SQLAlchemy database engine and local sessions
+│   │   └── models/        # Database tables schemas
+│   └── tests/             # Automated unittest suite
+└── frontend/
+    ├── src/
+    │   ├── app/           # Navigation routers and page views
+    │   ├── components/    # Common UI elements and map components
+    │   ├── services/      # Axios API request hooks
+    │   └── store/         # Zustand global client state
+    └── package.json
 ```
 
 ---
 
-## 🛣️ Development Roadmap
+## 🚀 Full-Stack Setup & Startup Runbook
 
-### Sprint 0
-
-- Project setup
-- Repository structure
-- Documentation
-
-### Sprint 1
-
-- Backend foundation
-- Database setup
-- API architecture
-
-### Sprint 2
-
-- Frontend foundation
-- UI components
-- Routing
-
-### Sprint 3
-
-- Tourism database
-- Interactive maps
-
-### Sprint 4
-
-- Route optimization
-
-### Sprint 5
-
-- Budget estimation engine
-
-### Sprint 6
-
-- AI itinerary generation
-
-### Sprint 7
-
-- Deployment
-
----
-
-## 🎯 Objectives
-
-- Demonstrate modern full-stack development skills.
-- Apply geospatial database technologies.
-- Integrate Generative AI into a real-world application.
-- Design scalable REST APIs.
-- Build production-ready software following industry best practices.
-
----
-
-## 📈 Current Status
-
-🚧 Under Active Development
-
-Current Version:
-
+### 1. Database Setup
+Ensure PostgreSQL is running locally, then log in and create a database named `smartyatra`:
+```sql
+CREATE DATABASE smartyatra;
 ```
 
-v0.1.0
+### 2. Backend Setup
+1. Navigate to the backend directory and install Python dependencies:
+   ```bash
+   cd backend
+   pip install -r requirements.txt
+   ```
+2. Copy the environment configuration template:
+   ```bash
+   cp .env.example .env
+   ```
+3. Update the `.env` parameters (DB username, DB password, and optionally your `GEMINI_API_KEY`).
+4. Apply database migrations to create the tables schema:
+   ```bash
+   python -m alembic upgrade head
+   ```
+5. Seed the database with cities, categories, and destinations:
+   ```bash
+   python seed.py
+   ```
+6. Start the FastAPI backend server:
+   ```bash
+   python -m uvicorn app.main:app --port 8000 --reload
+   ```
 
+### 3. Frontend Setup
+1. Navigate to the frontend directory:
+   ```bash
+   cd ../frontend
+   ```
+2. Copy the environment template:
+   ```bash
+   cp .env.example .env.local
+   ```
+3. Install frontend Node modules:
+   ```bash
+   npm install
+   ```
+4. Start the local development server:
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) in your web browser.
+
+---
+
+## 🧪 Running Verifications
+
+### Backend Unit Tests
+Run the test suite using standard Python `unittest`:
+```bash
+cd backend
+set PYTHONPATH=.
+python -m unittest discover -s tests
 ```
 
----
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
----
-
-## 👨‍💻 Author
-
-Developed as a portfolio project to explore the intersection of Full Stack Development, Geospatial Systems, Optimization Algorithms, and Generative AI.
-
----
-
-⭐ If you find this project interesting, consider giving it a star.
+### Frontend Linters & Builds
+Run linter verification and verify Next.js production builds:
+```bash
+cd frontend
+npm run lint
+npm run build
 ```

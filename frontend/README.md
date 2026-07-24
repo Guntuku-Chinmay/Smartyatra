@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧭 Smartyatra Frontend
 
-## Getting Started
+> AI-Powered Smart Travel Planner Interface built with Next.js, Tailwind CSS, TypeScript, and Leaflet Maps.
 
-First, run the development server:
+This directory contains the user interface of the Smartyatra application, enabling travelers to sign up, input preferences, browse tourist destination details, and build optimized day-by-day travel itineraries.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🛠️ Technology Stack & Libraries
+
+- **Framework**: Next.js 16 (App Router, Turbopack enabled)
+- **Styling**: Tailwind CSS & CSS Modules
+- **State Management**: Zustand (for user session profiles, local settings, and travel preferences)
+- **Interactive Maps**: Leaflet & React-Leaflet (loaded with client-side dynamic imports to ensure SSR compatibility)
+- **Form Handling**: React Hook Form + Zod validation
+- **HTTP client**: Axios
+
+---
+
+## 📂 Directory Structure
+
+```
+frontend/
+├── public/                 # Static assets (images, markers)
+└── src/
+    ├── app/                # Page route handlers (explore, planner, settings, etc.)
+    ├── components/         # Modular layout, form, map, and ui elements
+    ├── services/           # Axios network endpoints communication hooks
+    ├── store/              # Zustand global client-side state managers
+    └── types/              # Unified TypeScript definitions
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1. Configure Environments
+Copy the configuration template and verify the target FastAPI backend endpoint:
+```bash
+cp .env.example .env.local
+```
+Ensure `NEXT_PUBLIC_API_URL` points to your running backend:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+```
 
-## Learn More
+### 2. Install Dependencies
+```bash
+npm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 3. Run Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 4. Build for Production
+```bash
+npm run build
+npm run start
+```
