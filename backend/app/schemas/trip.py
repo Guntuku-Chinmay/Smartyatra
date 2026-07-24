@@ -7,7 +7,7 @@ from app.schemas.common import TimestampSchema
 
 
 class TripBase(BaseModel):
-    title: str
+    name: str
     start_date: date
     end_date: date
     total_budget: int = 0
@@ -20,7 +20,7 @@ class TripCreate(TripBase):
 
 
 class TripUpdate(BaseModel):
-    title: str | None = None
+    name: str | None = None
     start_date: date | None = None
     end_date: date | None = None
     total_budget: int | None = None

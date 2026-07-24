@@ -40,7 +40,9 @@ class Destination(Base, TimestampMixin):
         back_populates="destination",
         cascade="all, delete-orphan",
     )
-    destination = relationship(
-        "Destination",
-        back_populates="itineraries",
+    trips = relationship(
+        "TripDestination",
+        back_populates="destination",
+        cascade="all, delete-orphan",
     )
+

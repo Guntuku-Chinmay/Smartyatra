@@ -53,4 +53,4 @@ class Itinerary(Base):
         back_populates="itineraries",
     )
 
-    destination = relationship("Destination")
+    destination = relationship("Destination", back_populates="itineraries")
