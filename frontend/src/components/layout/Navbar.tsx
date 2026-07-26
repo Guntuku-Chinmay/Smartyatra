@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -17,6 +17,15 @@ export default function Navbar() {
   const { theme, toggleTheme } = useDarkMode();
   const { isAuthenticated, user, logout } = useAuthStore();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 15);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -68,12 +77,34 @@ export default function Navbar() {
     },
   ];
 
+  const isHomeTransparent = pathname === "/" && !isScrolled;
+
+  const getLinkColor = (isActive: boolean) => {
+    if (isActive) return "text-blue-500 dark:text-blue-400";
+    if (isHomeTransparent) return "text-white/90 hover:text-white";
+    return "text-slate-600 dark:text-slate-300 hover:text-blue-600";
+  };
+
+  const getIconBtnColor = () => {
+    if (isHomeTransparent) return "text-white/90 hover:bg-white/10";
+    return "text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900";
+  };
+
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-100 dark:border-slate-800/60 bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl transition-colors duration-200">
+    <header className={`sticky top-0 z-50 transition-all duration-300 ${
+      isScrolled 
+        ? "border-b border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 shadow-md py-1" 
+        : "bg-transparent border-transparent py-3"
+    }`}>
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+        
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-2 text-2xl font-black text-blue-600 dark:text-blue-500 transition hover:opacity-90 font-display">
-          <Sparkles className="h-6 w-6 text-blue-600 animate-pulse" />
+        <Link href="/" className={`flex items-center gap-2 text-2xl font-black transition hover:opacity-90 font-display ${
+          isHomeTransparent ? "text-white" : "text-blue-600 dark:text-blue-500"
+        }`}>
+          <Sparkles className={`h-6 w-6 animate-pulse ${
+            isHomeTransparent ? "text-blue-300" : "text-blue-600"
+          }`} />
           <span>Smartyatra</span>
         </Link>
 
@@ -85,15 +116,13 @@ export default function Navbar() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`relative px-3 py-2 text-sm font-semibold transition-colors duration-200 hover:text-blue-600 dark:hover:text-blue-450 ${
-                  isActive ? "text-blue-600 dark:text-blue-500" : "text-slate-600 dark:text-slate-450"
-                }`}
+                className={`relative px-3 py-2 text-sm font-semibold transition-colors duration-200 ${getLinkColor(isActive)}`}
               >
                 {item.name}
                 {isActive && (
                   <motion.div
                     layoutId="activeTabIndicator"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-500 rounded-full"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-550 rounded-full"
                     transition={{ type: "spring", stiffness: 350, damping: 30 }}
                   />
                 )}
@@ -104,10 +133,11 @@ export default function Navbar() {
 
         {/* Desktop Action Controls */}
         <div className="hidden md:flex items-center gap-4">
+          
           {/* Dark Mode toggle button */}
           <button
             onClick={toggleTheme}
-            className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-xl transition cursor-pointer"
+            className={`p-2 rounded-xl transition cursor-pointer ${getIconBtnColor()}`}
             aria-label="Toggle Theme"
           >
             {theme === "dark" ? <Sun className="h-5 w-5 text-amber-500" /> : <Moon className="h-5 w-5" />}
@@ -115,11 +145,12 @@ export default function Navbar() {
 
           {isAuthenticated ? (
             <div className="flex items-center gap-4">
+              
               {/* Notification icon */}
               <Dropdown
                 align="right"
                 trigger={
-                  <button className="relative p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-xl transition-colors cursor-pointer">
+                  <button className={`relative p-2 rounded-xl transition cursor-pointer ${getIconBtnColor()}`}>
                     <Bell className="h-5 w-5" />
                     <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-blue-600 ring-2 ring-white dark:ring-slate-950" />
                   </button>
@@ -131,7 +162,11 @@ export default function Navbar() {
               <Dropdown
                 align="right"
                 trigger={
-                  <div className="flex items-center gap-2 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-900 px-4 py-2 text-sm font-bold text-slate-700 dark:text-slate-200 transition hover:border-slate-200 dark:hover:border-slate-700 cursor-pointer select-none">
+                  <div className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold transition cursor-pointer select-none ${
+                    isHomeTransparent 
+                      ? "border-white/20 bg-white/10 hover:bg-white/20 text-white" 
+                      : "border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-slate-200"
+                  }`}>
                     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900 text-xs font-black text-blue-700 dark:text-blue-300 uppercase">
                       {user?.name ? user.name.slice(0, 2) : "U"}
                     </div>
@@ -144,7 +179,11 @@ export default function Navbar() {
           ) : (
             <Link
               href="/login"
-              className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 shadow-lg shadow-blue-500/10 hover:shadow-blue-500/20 transition-all hover:-translate-y-0.5"
+              className={`rounded-xl font-bold px-6 py-2.5 transition-all hover:-translate-y-0.5 shadow-md ${
+                isHomeTransparent 
+                  ? "bg-white text-blue-900 hover:bg-slate-100 shadow-white/5" 
+                  : "bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/10"
+              }`}
             >
               Sign In
             </Link>
@@ -154,7 +193,9 @@ export default function Navbar() {
         {/* Mobile menu toggle */}
         <button
           onClick={() => setIsMobileOpen(true)}
-          className="flex h-10 w-10 items-center justify-center rounded-xl hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-700 dark:text-slate-300 md:hidden cursor-pointer"
+          className={`flex h-10 w-10 items-center justify-center rounded-xl md:hidden cursor-pointer ${
+            isHomeTransparent ? "text-white hover:bg-white/10" : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900"
+          }`}
         >
           <Menu className="h-6 w-6" />
         </button>
