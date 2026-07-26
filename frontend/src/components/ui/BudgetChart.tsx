@@ -14,7 +14,7 @@ interface BudgetChartProps {
 }
 
 export default function BudgetChart({ categories }: BudgetChartProps) {
-  const total = categories.reduce((sum, c) => sum + c.amount, 0);
+
 
   return (
     <div className="space-y-6">

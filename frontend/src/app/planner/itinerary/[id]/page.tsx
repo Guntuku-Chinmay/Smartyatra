@@ -6,7 +6,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowLeft, Calendar, Clock, MapPin, Printer, Edit2, Save, Loader2, Coins, Milestone, Share2, Hotel, Eye, Copy, Check } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, MapPin, Printer, Edit2, Save, Loader2, Coins, Milestone, Share2, Hotel, Copy, Check } from "lucide-react";
 
 import { getTrip, getItineraries, ItineraryEntry, Trip } from "@/services/planner.service";
 import { getBudgets, updateBudget, Budget } from "@/services/budget.service";
@@ -43,18 +43,20 @@ export default function ItineraryPage() {
   });
 
   // Fetch Itineraries
-  const { data: tripItineraries = [], isLoading: isItinerariesLoading } = useQuery<ItineraryEntry[]>({
-    queryKey: ["itineraries", tripId],
-    queryFn: () => getItineraries(parseInt(tripId)),
-    enabled: !!tripId,
+  const { data: allItineraries = [], isLoading: isItinerariesLoading } = useQuery<ItineraryEntry[]>({
+    queryKey: ["itineraries"],
+    queryFn: getItineraries,
   });
 
+  const tripItineraries = allItineraries.filter((i) => i.trip_id === parseInt(tripId));
+
   // Fetch Budgets
-  const { data: budgets = [], isLoading: isBudgetsLoading } = useQuery<Budget[]>({
-    queryKey: ["budgets", tripId],
-    queryFn: () => getBudgets(parseInt(tripId)),
-    enabled: !!tripId,
+  const { data: allBudgets = [], isLoading: isBudgetsLoading } = useQuery<Budget[]>({
+    queryKey: ["budgets"],
+    queryFn: getBudgets,
   });
+
+  const budgets = allBudgets.filter((b) => b.trip_id === parseInt(tripId));
 
   // Fetch all destinations
   const { data: destinations = [] } = useQuery({
@@ -391,6 +393,7 @@ export default function ItineraryPage() {
               {hotelRecommendations.map((hotel, idx) => (
                 <div key={idx} className="flex gap-3 rounded-2xl border border-slate-50 bg-slate-50/20 p-2.5 hover:bg-white hover:shadow-md transition duration-200">
                   <div className="relative h-14 w-20 overflow-hidden rounded-xl shrink-0">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={hotel.image} alt={hotel.name} className="object-cover h-full w-full" />
                   </div>
                   <div className="flex-1 min-w-0">

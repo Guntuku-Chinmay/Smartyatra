@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
-import { Compass, Calendar, Wallet, MapPin, Award, ArrowRight, Loader2, Plus, Sparkles, Bookmark, Search, UserCheck } from "lucide-react";
+import { Compass, Calendar, Wallet, MapPin, Award, ArrowRight, Loader2, Plus, Sparkles, Search, UserCheck, Settings } from "lucide-react";
 
 import { useAuthStore } from "@/store/auth.store";
 import { getTrips, getAIRecommendations } from "@/services/planner.service";
