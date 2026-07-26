@@ -11,6 +11,7 @@ import { Compass, Wallet, Users, Car, Smile, Check, ArrowRight, Loader2, Sparkle
 
 import api from "@/services/api";
 import { createTrip, createItinerary, TripCreateInput } from "@/services/planner.service";
+import Stepper from "@/components/ui/Stepper";
 
 interface City {
   id: number;
@@ -245,25 +246,11 @@ export default function PlannerForm() {
   return (
     <div className="w-full max-w-3xl mx-auto">
       {/* Progress tracker stepper */}
-      <div className="mb-10 flex items-center justify-between px-4">
-        {[1, 2, 3].map((s) => (
-          <div key={s} className="flex items-center gap-2">
-            <div
-              className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold border transition ${
-                step >= s
-                  ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/25"
-                  : "bg-white border-slate-200 text-slate-400"
-              }`}
-            >
-              {step > s ? <Check className="h-5 w-5" /> : s}
-            </div>
-            <span className={`text-xs md:text-sm font-bold ${step >= s ? "text-slate-800" : "text-slate-400"}`}>
-              {s === 1 ? "Basics" : s === 2 ? "Details" : "Interests"}
-            </span>
-            {s < 3 && <div className="h-[2px] w-12 bg-slate-200 sm:w-20" />}
-          </div>
-        ))}
-      </div>
+      <Stepper
+        steps={["Basics", "Details", "Interests"]}
+        currentStep={step}
+        className="mb-10 px-4"
+      />
 
       {formError && (
         <div className="mb-6 rounded-xl border border-red-100 bg-red-50 p-4 text-xs font-semibold text-red-600">
