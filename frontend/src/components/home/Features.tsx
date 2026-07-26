@@ -63,7 +63,7 @@ const cardVariants = {
 export default function Features() {
   return (
     <section className="py-20 bg-white">
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="mx-auto max-w-[1440px] px-6 lg:px-8 xl:px-10">
         <div className="text-center max-w-3xl mx-auto">
           <h2 className="font-display text-4xl font-black tracking-tight text-slate-900 md:text-5xl">
             Everything You Need to <span className="gradient-text">Travel Smarter</span>

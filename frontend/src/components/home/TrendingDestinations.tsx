@@ -81,7 +81,7 @@ export default function TrendingDestinations() {
   return (
     <section className="py-20 bg-white space-y-20">
       {/* Trending Destinations */}
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="mx-auto max-w-[1440px] px-6 lg:px-8 xl:px-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
           <div>
             <h2 className="font-display text-4xl font-black tracking-tight text-slate-900 md:text-5xl">
@@ -171,7 +171,7 @@ export default function TrendingDestinations() {
 
       {/* Recently Viewed Carousel */}
       {viewedItems.length > 0 && (
-        <div className="mx-auto max-w-7xl px-6 border-t border-slate-100 pt-16">
+        <div className="mx-auto max-w-[1440px] px-6 lg:px-8 xl:px-10 border-t border-slate-100 pt-16">
           <div className="mb-10">
             <h3 className="font-display text-2xl font-black text-slate-800 flex items-center gap-2">
               <Eye className="h-6 w-6 text-blue-500" />

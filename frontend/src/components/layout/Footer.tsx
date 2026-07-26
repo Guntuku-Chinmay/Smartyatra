@@ -6,7 +6,7 @@ import { Compass, Sparkles, MapPin } from "lucide-react";
 export default function Footer() {
   return (
     <footer className="border-t border-slate-100 bg-white pt-16 pb-8">
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="mx-auto max-w-[1440px] px-6 lg:px-8 xl:px-10">
         <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
           {/* Logo & Description */}
           <div className="sm:col-span-2">

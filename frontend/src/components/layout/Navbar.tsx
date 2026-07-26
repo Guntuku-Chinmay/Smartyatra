@@ -94,9 +94,9 @@ export default function Navbar() {
     <header className={`sticky top-0 z-50 transition-all duration-300 ${
       isScrolled 
         ? "border-b border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 shadow-md py-1" 
-        : "bg-transparent border-transparent py-3"
+        : "bg-transparent border-transparent py-4"
     }`}>
-      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+      <nav className="mx-auto flex h-20 max-w-[1440px] items-center justify-between px-6 lg:px-8 xl:px-10">
         
         {/* Brand Logo */}
         <Link href="/" className={`flex items-center gap-2 text-2xl font-black transition hover:opacity-90 font-display ${

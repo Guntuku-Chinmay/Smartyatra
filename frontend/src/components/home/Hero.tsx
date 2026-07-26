@@ -16,7 +16,6 @@ export default function Hero() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Redirect to planner wizard with query parameters
     const query = new URLSearchParams({
       start: startLoc,
       destination: destLoc,
@@ -27,24 +26,24 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative w-full min-h-[75vh] flex items-center justify-center overflow-hidden bg-slate-950 text-white">
+    <section className="relative w-full min-h-[65vh] lg:min-h-[70vh] flex flex-col overflow-hidden bg-slate-950 text-white">
       {/* Background Image: Immersive Andhra Pradesh Gandikota/Visakhapatnam backdrop */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-10000 scale-105"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
         style={{ 
           backgroundImage: `url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80')`,
         }}
       />
       
-      {/* Deep Navy Gradient Overlay for optimal text readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#071A2E]/85 via-[#071A2E]/60 to-[#F8FAFC]" />
+      {/* Deep Navy Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#071A2E]/90 via-[#071A2E]/65 to-[#F8FAFC]" />
 
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 py-20 text-center space-y-10">
+      <div className="relative z-10 w-full max-w-[1440px] mx-auto px-6 lg:px-8 xl:px-10 flex-1 flex flex-col justify-between pt-28 pb-10">
         
-        {/* Headline & Badges */}
-        <div className="space-y-6 max-w-4xl mx-auto">
+        {/* Headline & Subtitle Centered Vertically */}
+        <div className="flex-1 flex flex-col justify-center items-center text-center space-y-6 max-w-4xl mx-auto my-auto">
           <motion.div
-            initial={{ opacity: 0, y: -15 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-2 text-xs font-bold text-blue-300 backdrop-blur-md"
@@ -54,10 +53,10 @@ export default function Hero() {
           </motion.div>
 
           <motion.h1
-            initial={{ opacity: 0, y: 25 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="font-display text-4xl sm:text-7xl font-black tracking-tight leading-[1.1]"
+            className="font-display text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] md:mt-2"
           >
             Plan Your Next <span className="text-blue-400">Journey</span> with AI
           </motion.h1>
@@ -66,24 +65,24 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-slate-300 font-semibold text-sm sm:text-base max-w-2xl mx-auto leading-relaxed"
+            className="text-slate-300 font-semibold text-sm sm:text-base max-w-2xl leading-relaxed"
           >
             Calculate dynamic travel budgets, solve geodetic route optimization, map weather forecasts, and generate custom day-wise itineraries instantly.
           </motion.p>
         </div>
 
-        {/* Embedded Premium Search Planner Card (Glassmorphism layout) */}
+        {/* Embedded Premium Search Planner Card (Taller inputs, aligned bottom) */}
         <motion.div
-          initial={{ opacity: 0, y: 25 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="w-full max-w-5xl mx-auto rounded-3xl border border-white/10 bg-slate-900/60 backdrop-blur-xl p-5 shadow-2xl"
+          className="w-full max-w-6xl mx-auto rounded-3xl border border-white/10 bg-slate-900/60 backdrop-blur-xl p-6 shadow-2xl mt-8"
         >
           <form onSubmit={handleSearch} className="grid gap-4 md:grid-cols-12 items-end">
             
             {/* Start Location */}
             <div className="md:col-span-3 text-left">
-              <label className="block text-[10px] font-black text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-1">
+              <label className="block text-[10px] font-black text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                 <Compass className="h-3.5 w-3.5 text-blue-400" />
                 <span>Start Location</span>
               </label>
@@ -92,14 +91,14 @@ export default function Hero() {
                 placeholder="e.g. Visakhapatnam"
                 value={startLoc}
                 onChange={(e) => setStartLoc(e.target.value)}
-                className="w-full rounded-xl bg-white/10 border border-white/10 focus:border-blue-400 px-4 py-3 text-xs font-bold text-white placeholder-slate-400 outline-none transition"
+                className="w-full h-12 rounded-xl bg-white/10 border border-white/10 focus:border-blue-400 px-4 text-xs font-bold text-white placeholder-slate-400 outline-none transition"
                 required
               />
             </div>
 
             {/* Destination Location */}
             <div className="md:col-span-3 text-left">
-              <label className="block text-[10px] font-black text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-1">
+              <label className="block text-[10px] font-black text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                 <MapPin className="h-3.5 w-3.5 text-blue-400" />
                 <span>Destination</span>
               </label>
@@ -108,21 +107,21 @@ export default function Hero() {
                 placeholder="e.g. Goa, Munnar"
                 value={destLoc}
                 onChange={(e) => setDestLoc(e.target.value)}
-                className="w-full rounded-xl bg-white/10 border border-white/10 focus:border-blue-400 px-4 py-3 text-xs font-bold text-white placeholder-slate-400 outline-none transition"
+                className="w-full h-12 rounded-xl bg-white/10 border border-white/10 focus:border-blue-400 px-4 text-xs font-bold text-white placeholder-slate-400 outline-none transition"
                 required
               />
             </div>
 
             {/* Budget style */}
             <div className="md:col-span-2 text-left">
-              <label className="block text-[10px] font-black text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-1">
+              <label className="block text-[10px] font-black text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                 <Coins className="h-3.5 w-3.5 text-blue-400" />
                 <span>Budget Style</span>
               </label>
               <select
                 value={budget}
                 onChange={(e) => setBudget(e.target.value)}
-                className="w-full rounded-xl bg-slate-800 border border-white/10 focus:border-blue-400 px-4 py-3 text-xs font-bold text-white outline-none transition cursor-pointer"
+                className="w-full h-12 rounded-xl bg-slate-800 border border-white/10 focus:border-blue-400 px-4 text-xs font-bold text-white outline-none transition cursor-pointer"
               >
                 <option value="Budget" className="bg-slate-900">Budget</option>
                 <option value="Standard" className="bg-slate-900">Standard</option>
@@ -132,14 +131,14 @@ export default function Hero() {
 
             {/* Travelers */}
             <div className="md:col-span-2 text-left">
-              <label className="block text-[10px] font-black text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-1">
+              <label className="block text-[10px] font-black text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                 <Users className="h-3.5 w-3.5 text-blue-400" />
                 <span>Travelers</span>
               </label>
               <select
                 value={travelers}
                 onChange={(e) => setTravelers(e.target.value)}
-                className="w-full rounded-xl bg-slate-800 border border-white/10 focus:border-blue-400 px-4 py-3 text-xs font-bold text-white outline-none transition cursor-pointer"
+                className="w-full h-12 rounded-xl bg-slate-800 border border-white/10 focus:border-blue-400 px-4 text-xs font-bold text-white outline-none transition cursor-pointer"
               >
                 <option value="1" className="bg-slate-900">1 Traveler</option>
                 <option value="2" className="bg-slate-900">2 Travelers</option>
@@ -152,7 +151,7 @@ export default function Hero() {
             <div className="md:col-span-2">
               <button
                 type="submit"
-                className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-black text-xs px-4 py-3.5 shadow-lg shadow-blue-500/10 cursor-pointer transition transform hover:-translate-y-0.5"
+                className="w-full h-12 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-black text-xs px-4 shadow-lg shadow-blue-500/10 cursor-pointer transition transform hover:-translate-y-0.5"
               >
                 <Search className="h-4 w-4" />
                 <span>Plan My Trip</span>
