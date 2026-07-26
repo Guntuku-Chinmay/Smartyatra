@@ -1,9 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Star, Calendar, Wallet, MapPin, ArrowRight } from "lucide-react";
+import { Star, Calendar, Wallet, MapPin, ArrowRight, Heart, CloudSun } from "lucide-react";
 
 import { Destination } from "@/types/destination";
 import { formatRating } from "@/utils/formatRating";
@@ -13,6 +14,16 @@ interface DestinationCardProps {
 }
 
 export default function DestinationCard({ destination }: DestinationCardProps) {
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  // Determine mock weather based on category/season
+  const getWeather = () => {
+    if (destination.category === "Beach") return "☀️ 29°C";
+    if (destination.category === "Hills" || destination.category === "Nature") return "☁️ 22°C";
+    if (destination.category === "Temple" || destination.category === "Heritage") return "🌤️ 26°C";
+    return "☀️ 27°C";
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -29,12 +40,30 @@ export default function DestinationCard({ destination }: DestinationCardProps) {
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-105"
             sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 33vw"
+            priority={false}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60" />
           
           {/* Category Badge */}
-          <span className="absolute top-4 left-4 rounded-full bg-white/95 px-3.5 py-1 text-[10px] font-bold text-slate-800 uppercase tracking-wider backdrop-blur-sm shadow-sm">
+          <span className="absolute top-4 left-4 rounded-full bg-white/95 px-3 py-1.5 text-[9px] font-bold text-slate-800 uppercase tracking-wider backdrop-blur-sm shadow-sm select-none">
             {destination.category}
+          </span>
+
+          {/* Favorite Toggle Button */}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              setIsFavorite(!isFavorite);
+            }}
+            className="absolute top-4 right-4 rounded-full h-8 w-8 flex items-center justify-center bg-white/90 hover:bg-white text-slate-400 hover:text-rose-500 hover:scale-105 active:scale-95 transition shadow-sm cursor-pointer"
+          >
+            <Heart className={`h-4.5 w-4.5 transition-colors ${isFavorite ? "text-rose-500 fill-rose-500" : ""}`} />
+          </button>
+
+          {/* Weather Preview Overlay */}
+          <span className="absolute bottom-4 left-4 rounded-full bg-slate-900/60 text-white px-2.5 py-1 text-[9px] font-bold flex items-center gap-1 backdrop-blur-sm select-none">
+            <CloudSun className="h-3.5 w-3.5 text-blue-300" />
+            <span>{getWeather()}</span>
           </span>
         </div>
 
@@ -42,10 +71,10 @@ export default function DestinationCard({ destination }: DestinationCardProps) {
         <div className="p-6">
           <div className="flex items-start justify-between">
             <div>
-              <h3 className="font-display text-xl font-black text-slate-900 group-hover:text-blue-600 transition-colors">
+              <h3 className="font-display text-lg font-black text-slate-900 group-hover:text-blue-600 transition-colors">
                 {destination.name}
               </h3>
-              <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-slate-400">
+              <p className="mt-1 flex items-center gap-1 text-[10px] font-bold text-slate-400">
                 <MapPin className="h-3.5 w-3.5 text-blue-500" />
                 <span>{destination.state}</span>
               </p>
