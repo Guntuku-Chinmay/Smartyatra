@@ -1,23 +1,85 @@
 import { ReactNode } from "react";
 
-interface CardProps {
-  title: string;
+export function Card({
+  className = "",
+  children,
+}: {
+  className?: string;
   children: ReactNode;
+}) {
+  return (
+    <div className={`rounded-3xl border border-slate-100 bg-white shadow-sm transition hover:shadow-md ${className}`}>
+      {children}
+    </div>
+  );
 }
 
-export default function Card({
-  title,
+export function CardHeader({
+  className = "",
   children,
-}: CardProps) {
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-8 shadow-sm transition hover:shadow-lg">
-      <h3 className="mb-4 text-2xl font-bold">
-        {title}
-      </h3>
+    <div className={`flex flex-col space-y-1.5 p-6 ${className}`}>
+      {children}
+    </div>
+  );
+}
 
-      <div className="text-slate-600">
-        {children}
-      </div>
+export function CardTitle({
+  className = "",
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <h3 className={`font-display text-lg font-black leading-none tracking-tight text-slate-900 ${className}`}>
+      {children}
+    </h3>
+  );
+}
+
+export function CardDescription({
+  className = "",
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <p className={`text-xs font-semibold text-slate-400 ${className}`}>
+      {children}
+    </p>
+  );
+}
+
+export function CardContent({
+  className = "",
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className={`p-6 pt-0 ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+export function CardFooter({
+  className = "",
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className={`flex items-center p-6 pt-0 ${className}`}>
+      {children}
     </div>
   );
 }
